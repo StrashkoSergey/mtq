@@ -13,6 +13,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+if (APPLE)
+    link_directories("/usr/local/opt/openssl@1.1/lib" )
+    include_directories("/usr/local/opt/openssl@1.1/include")
+endif()
+
 project(mtq)
 
 

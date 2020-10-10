@@ -1,7 +1,9 @@
 #include <openssl/evp.h>
 #include <openssl/sha.h>
 #include <cstring>
-
+#ifdef __APPLE__
+#include <sstream>
+#endif
 template<typename TIN> class hash{
 public:
     hash(std::string id=""):
