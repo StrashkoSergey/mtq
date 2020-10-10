@@ -22,6 +22,7 @@ project(mtq)
 
 
 add_executable(mtq "")
+set_property(TARGET mtq PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 target_include_directories(mtq PRIVATE include)
 
 target_link_libraries(mtq pthread ssl crypto)
