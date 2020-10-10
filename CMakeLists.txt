@@ -9,6 +9,11 @@ else ()
     message(FATAL_ERROR "CMAKE_BUILD_TYPE must be Release|Debug. Terminated.")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -pedantic")
+	set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -22,6 +27,7 @@ project(mtq)
 
 
 add_executable(mtq "")
+set_property(TARGET mtq PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 target_include_directories(mtq PRIVATE include)
 
 target_link_libraries(mtq pthread ssl crypto)
