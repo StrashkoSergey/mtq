@@ -13,14 +13,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-project(mt_q)
+project(mtq)
 
 
-add_executable(mt_q "")
-target_include_directories(mt_q PRIVATE include)
+add_executable(mtq "")
+target_include_directories(mtq PRIVATE include)
 
-target_link_libraries(mt_q pthread ssl crypto)
-target_sources(mt_q PRIVATE
+target_link_libraries(mtq pthread ssl crypto)
+target_sources(mtq PRIVATE
     src/main.cpp
     PUBLIC
     include/mt_q_classic.h
