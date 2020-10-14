@@ -32,13 +32,10 @@ namespace q::atomic
             size_t size{0};
             // _head_tail_lock.lock();
             uint64_t tail{0};
-            tail = _tail.load(std::memory_order_relaxed);
-            //tail = _tail.load(std::memory_order_seq_cst);
-            //tail loaded
-            // need to load head but same time aquire head
             uint64_t head{0};
+            tail = _tail.load(std::memory_order_relaxed);
             head = _head.load(std::memory_order_acquire);
-            //head = _head.load(std::memory_order_seq_cst);
+
             size = head - tail;
             if (size < _capacity){
                 auto idx = head & _mask;

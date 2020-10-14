@@ -66,7 +66,7 @@ void generate_sampledata(std::vector<SampleData> &v, size_t n, hash<SampleData> 
 {
     v.reserve(n);
     std::random_device rd;
-    std::uniform_int_distribution<double> dist(-1000, 1000);
+    std::uniform_real_distribution<double> dist(-1000, 1000);
     for (uint64_t i=0; i < n; ++i)
     {
         SampleData s(i, dist(rd), dist(rd));
@@ -262,7 +262,7 @@ int main()
         hash<SampleData> hpush_sd("push sd");
         hash<SampleData> hpop_sd("pop sd");
         r_naive_sd.add_run(bench1to1_naive<SampleData, q_size>(sd_data, hpush_sd, hpop_sd));
-        //r_naive.add_run(bench1to1_naive<uint64_t, q_size>(data, hpush, hpop));
+        r_naive.add_run(bench1to1_naive<uint64_t, q_size>(data, hpush, hpop));
         if (h0 == hpush)
         {
             std::cout << "PUSH ok" << std::endl;
