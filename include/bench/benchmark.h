@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <chrono>
 namespace q::benchmark
@@ -26,7 +27,11 @@ template<typename DATA_TYPE, uint8_t Q_SIZE,  template<typename, uint8_t> typena
         }
 
     }
-
+    sample& operator=(sample const& other)
+    {
+        _in_data.assign(other._in_data.begin(), other._in_data.end());
+        return *this;
+    }
     void generate(uint64_t n)
     {
         DATA_GENERATOR g;
