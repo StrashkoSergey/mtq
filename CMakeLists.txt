@@ -28,7 +28,9 @@ project(mtq)
 
 
 add_executable(mtq "")
-set_property(TARGET mtq PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set_property(TARGET mtq PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
+endif()
 
 target_include_directories(mtq PRIVATE include)
 

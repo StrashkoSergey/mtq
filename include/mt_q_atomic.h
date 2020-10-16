@@ -9,9 +9,9 @@ namespace q::atomic
         public:
         mt_q():_capacity(std::pow(2,POWER_TWO_SIZE)), _mask(_capacity-1){
             #ifndef __APPLE__
-            _data = static_cast<DATA_TYPE*>(std::aligned_alloc(sizeof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
+            _data = static_cast<DATA_TYPE*>(std::aligned_alloc(alignof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
             #else
-            _data = static_cast<DATA_TYPE*>(aligned_alloc(sizeof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
+            _data = static_cast<DATA_TYPE*>(aligned_alloc(alignof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
             #endif
         };
 
