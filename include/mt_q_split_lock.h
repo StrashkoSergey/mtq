@@ -1,4 +1,4 @@
-
+#pragma once
 #include <cstring>
 #include <cstdint>
 #include <cstddef>
