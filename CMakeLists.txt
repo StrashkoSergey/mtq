@@ -37,8 +37,4 @@ target_include_directories(mtq PRIVATE include)
 target_link_libraries(mtq pthread ssl crypto)
 target_sources(mtq PRIVATE
     src/main.cpp
-    PUBLIC
-    include/mt_q_classic.h
-    include/mt_q_split_lock.h
-    include/mt_q_atomic.h
 )
