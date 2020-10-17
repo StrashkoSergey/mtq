@@ -1,3 +1,4 @@
+#pragma once
 #include <openssl/evp.h>
 #include <openssl/sha.h>
 #include <cstring>
@@ -25,7 +26,7 @@ public:
     }
 
     void update(const TIN* value){
-        EVP_DigestUpdate(_context, value, sizeof(value));
+        EVP_DigestUpdate(_context, value, sizeof(TIN));
     }
     std::string as_string()
     {

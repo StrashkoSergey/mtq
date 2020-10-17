@@ -4,14 +4,14 @@
 #include <atomic>
 namespace q::atomic
 {
-    template<typename DATA_TYPE, unsigned char POWER_TWO_SIZE>  class alignas(256) mt_q
+    template<typename DATA_TYPE, unsigned char POWER_TWO_SIZE>  class alignas(256) spmc_q
     {
         public:
         mt_q():_capacity(std::pow(2,POWER_TWO_SIZE)), _mask(_capacity-1){
-            #ifndef __APPLE__
-            _data = static_cast<DATA_TYPE*>(std::aligned_alloc(sizeof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
+            #ifdef __APPLE__
+            _data = static_cast<DATA_TYPE*>(aligned_alloc(alignof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
             #else
-            _data = static_cast<DATA_TYPE*>(aligned_alloc(sizeof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
+            _data = static_cast<DATA_TYPE*>(std::aligned_alloc(alignof(DATA_TYPE), sizeof(DATA_TYPE)* _capacity));
             #endif
         };
 
@@ -32,13 +32,10 @@ namespace q::atomic
             size_t size{0};
             // _head_tail_lock.lock();
             uint64_t tail{0};
-            tail = _tail.load(std::memory_order_relaxed);
-            //tail = _tail.load(std::memory_order_seq_cst);
-            //tail loaded
-            // need to load head but same time aquire head
             uint64_t head{0};
+            tail = _tail.load(std::memory_order_relaxed);
             head = _head.load(std::memory_order_acquire);
-            //head = _head.load(std::memory_order_seq_cst);
+
             size = head - tail;
             if (size < _capacity){
                 auto idx = head & _mask;
@@ -57,23 +54,30 @@ namespace q::atomic
             size_t size{0};
             uint64_t head{0};
             uint64_t tail{0};
-            head = _head.load(std::memory_order_relaxed);
             tail = _tail.load(std::memory_order_acquire);
             // head = _head.load(std::memory_order_seq_cst);
             // tail = _tail.load(std::memory_order_seq_cst);
-
-            size = head - tail;
-            if (size > 0)
+            do 
             {
-                auto idx = tail & _mask;
-                DATA_TYPE* read_ptr = _data + idx;
-                memcpy(out, read_ptr, sizeof(DATA_TYPE)) ;
-                _tail.store(tail+1, std::memory_order_release);
-                return true;
-            }
+                head = _head.load(std::memory_order_relaxed);
+                size = head - tail;
+                if (size == 0)
+                {
+                    return false;
+                }
+                else 
+                {
+                    auto idx = tail & _mask;
+                    DATA_TYPE* read_ptr = _data + idx;
+                    memcpy(out, read_ptr, sizeof(DATA_TYPE)) ;
+                    // _tail.store(tail+1, std::memory_order_release);
+                    // return true;
+                } 
+
+            } while (! _tail.compare_exchange_weak(tail, tail+1, std::memory_order_release, std::memory_order_relaxed));
             //_head_tail_lock.unlock();
             //std::cout << "POP: H: " << _head << " T: " << _tail << std::endl;
-            return false;
+            return true;
 
         }
 
