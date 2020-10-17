@@ -339,10 +339,70 @@ template<typename D, uint8_t SIZE, template<typename, uint8_t> typename Q, class
 
 
 }
+// std::atomic<uint64_t> acc=0;
+
+// void f_sum(std::vector<uint32_t>& in, uint32_t s, uint32_t e)
+// {
+//     for(uint32_t i=s; i<e; ++i){
+//         acc.fetch_add(in[i], std::memory_order_relaxed);
+//     }
+// }
+
+// void generate_uin32_t_data(std::vector<uint32_t> &v, size_t n)
+// {
+//     v.reserve(n);
+//     std::random_device rd;
+//     std::uniform_int_distribution<uint32_t> dist(0, 1024);
+//     v.resize(n);
+
+//     for (uint64_t i=0; i < n; ++i)
+//     {
+//         v[i]=dist(rd);
+
+//     }
+// }
+
+// uint64_t acc_bad{0};
+// void f_sum_bad(std::vector<uint32_t>& in, uint32_t s, uint32_t e)
+// {
+//     for(uint32_t i=s; i<e; ++i){
+//         acc_bad+=in[i];
+//     }
+// }
+
 
 int main()
 {
-    uint64_t data_size = 2000000;
+
+    // std::vector<uint32_t> data;
+    // generate_uin32_t_data(data, 1024*1024);
+    // uint64_t acc0{0};
+    // for(auto it = data.begin(); it!= data.end(); ++it)
+    // {
+    //     acc0 += *it;
+    // }
+    // // we are smart so...
+    // auto s= std::chrono::steady_clock::now();
+    // std::thread t0(&f_sum, std::ref(data), 0, 1024*512);
+    // std::thread t1(&f_sum, std::ref(data), 1024*512, 1024*1024);
+    // t0.join();
+    // t1.join();
+    // auto e = std::chrono::steady_clock::now();
+    // uint64_t duration = std::chrono::duration_cast<std::chrono::microseconds>(e-s).count();
+    // std::cout <<"duration: " << duration << std::endl;
+
+    // std::thread t2(&f_sum_bad, std::ref(data), 0, 1024*512);
+    // std::thread t3(&f_sum_bad, std::ref(data), 1024*512, 1024*1024);
+    // t2.join();
+    // t3.join();
+
+
+    // auto acc1 = acc.load(std::memory_order_relaxed);
+    // assert(acc0==acc1);
+    // assert(acc0 == acc_bad);
+    // return 0;
+
+    uint64_t data_size = 1000000;
     uint8_t n_runs = 10;
     benchmark<SampleData, 10, q::classic::mt_q,sample_SD_generator, sample_SD_verifier>("Naive", data_size, n_runs);
     benchmark<SampleData, 10, q::split_lock::mt_q,sample_SD_generator, sample_SD_verifier>("Split lock", data_size, n_runs);
