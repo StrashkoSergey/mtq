@@ -11,7 +11,7 @@
 #include "queue/mt_q_atomic.h"
 #include "hash/hash.h"
 #include "bench/benchmark.h"
-
+#include "queue/spmc_q.h"
 struct SampleData {
     SampleData(uint64_t i=0, double ix=0.0, double iy=0.0): id{i}, x{ix}, y{iy} {}
     uint64_t id;
@@ -121,7 +121,11 @@ int main()
     uint8_t n_runs = 10;
     benchmark<SampleData, 10, q::classic::mt_q,sample_SD_generator, sample_SD_verifier>("Naive", data_size, n_runs);
     benchmark<SampleData, 10, q::split_lock::mt_q,sample_SD_generator, sample_SD_verifier>("Split lock", data_size, n_runs);
-    benchmark<SampleData, 10, q::atomic::mt_q,sample_SD_generator, sample_SD_verifier>("Atomic", data_size, n_runs);
-
+    benchmark<SampleData, 20, q::atomic::mt_q,sample_SD_generator, sample_SD_verifier>("Atomic", data_size, n_runs, 1,1);
+    benchmark<SampleData, 10, q::atomic::spmc_q, sample_SD_generator, sample_SD_verifier>("Spmc1", data_size,n_runs, 1, 1);
+    // benchmark<SampleData, 10, q::atomic::spmc_q, sample_SD_generator, sample_SD_verifier>("Spmc2", data_size,n_runs, 2, 1);
+    // benchmark<SampleData, 10, q::atomic::spmc_q, sample_SD_generator, sample_SD_verifier>("Spmc4", data_size,n_runs, 4, 1);
+    // benchmark<SampleData, 10, q::atomic::spmc_q, sample_SD_generator, sample_SD_verifier>("Spmc8", data_size,n_runs, 8, 1);
+    // benchmark<SampleData, 10, q::atomic::spmc_q, sample_SD_generator, sample_SD_verifier>("Spmc16", data_size,n_runs, 16, 1);
     return 0;
 }

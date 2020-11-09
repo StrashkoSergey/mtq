@@ -50,7 +50,7 @@ template<typename DATA_TYPE, uint8_t Q_SIZE,  template<typename, uint8_t> typena
     void do_run()
     {
         //first calculate run plan
-        size_t stride = _in_data.size() / _n_w;
+        size_t stride = (_in_data.size() / _n_w)+1;
         std::vector<std::pair<typename std::vector<DATA_TYPE>::iterator,typename std::vector<DATA_TYPE>::iterator>> strides;
         auto b = _in_data.begin();
         while (std::distance(b+stride, _in_data.end()) > 0)
