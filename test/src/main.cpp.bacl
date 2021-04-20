@@ -9,11 +9,17 @@
 #include "queue/mt_q_classic.h"
 #include "queue/mt_q_split_lock.h"
 #include "queue/mt_q_atomic.h"
+#include "queue/mt_q2.h"
+#include "queue/mt_q3.h"
 #include "hash/hash.h"
 #include "bench/benchmark.h"
 
 struct SampleData {
+    SampleData(const SampleData& o)
+        :id(o.id),x(o.x), y(o.y)
+    {}
     SampleData(uint64_t i=0, double ix=0.0, double iy=0.0): id{i}, x{ix}, y{iy} {}
+    ~SampleData()= default;
     uint64_t id;
     double x;
     double y;
@@ -21,7 +27,7 @@ struct SampleData {
         x += other.x;
         y += other.y;
         id = 0;
-        return *this;    
+        return *this;
     }
 };
 
@@ -89,7 +95,7 @@ template<typename D, uint8_t SIZE, template<typename, uint8_t> typename Q, class
             std::cout << "failed" << std::endl;
         } else {
             std::cout<< std::dec << "Pass: " << it->get_duration() << " usec"  << std::endl;
-            
+
         }
     }
     uint64_t total =samples.begin()->get_duration();
@@ -119,9 +125,11 @@ int main()
 {
     uint64_t data_size = 1000000;
     uint8_t n_runs = 10;
-    benchmark<SampleData, 10, q::classic::mt_q,sample_SD_generator, sample_SD_verifier>("Naive", data_size, n_runs);
-    benchmark<SampleData, 10, q::split_lock::mt_q,sample_SD_generator, sample_SD_verifier>("Split lock", data_size, n_runs);
+    //benchmark<SampleData, 10, q::classic::mt_q,sample_SD_generator, sample_SD_verifier>("Naive", data_size, n_runs);
+    //benchmark<SampleData, q_size, q::split_lock::mt_q,sample_SD_generator, sample_SD_verifier>("Split lock", data_size, n_runs);
     benchmark<SampleData, 10, q::atomic::mt_q,sample_SD_generator, sample_SD_verifier>("Atomic", data_size, n_runs);
+    benchmark<SampleData, 10, q::atomic::mt_q2,sample_SD_generator, sample_SD_verifier>("Atomic folly memory order", data_size, n_runs);
+    benchmark<SampleData, 1, q::atomic::mt_q3,sample_SD_generator, sample_SD_verifier>("Atomic inplace constructor", data_size, n_runs);
 
     return 0;
 }
