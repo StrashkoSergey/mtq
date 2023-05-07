@@ -9,6 +9,7 @@
 #include "queue/mt_q_classic.h"
 #include "queue/mt_q_split_lock.h"
 #include "queue/mt_q_atomic.h"
+#include "queue/spmc_q.h"
 #include "hash/hash.h"
 #include "bench/benchmark.h"
 
@@ -115,6 +116,45 @@ template<typename D, uint8_t SIZE, template<typename, uint8_t> typename Q, class
 
 }
 
+// q::atomic::mt_q<uint16_t, 9> queue{};
+
+
+// void writer(int start, int step, int end, int sleep, bool *res) {
+
+//     for (auto i = start; i <= end; i+= step) {
+//         std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+//         uint16_t v{i};
+//         if (!queue.push(v)){
+//             *res = false;
+//             return;
+//         }
+//     }
+//     *res = true;
+//     return;
+// }
+
+
+// void reader() {
+    
+// }
+
+
+// struct Reader {
+//     bool operator ()(uint64_t v){
+//         sum +=v;
+//         ++n;
+//         if (v == 0) {
+//             return false;
+//         }
+//         return true;
+//     }
+//     uint64_t sum{0};
+//     uint64_t n{0};
+// };
+
+// typedef q::atomic::spsc_q<uint64_t, 10, Reader> Queue;
+
+
 int main()
 {
     uint64_t data_size = 1000000;
@@ -122,6 +162,35 @@ int main()
     benchmark<SampleData, 10, q::classic::mt_q,sample_SD_generator, sample_SD_verifier>("Naive", data_size, n_runs);
     benchmark<SampleData, 10, q::split_lock::mt_q,sample_SD_generator, sample_SD_verifier>("Split lock", data_size, n_runs);
     benchmark<SampleData, 10, q::atomic::mt_q,sample_SD_generator, sample_SD_verifier>("Atomic", data_size, n_runs);
+    benchmark<SampleData, 10, q::atomic::spsc_q,sample_SD_generator, sample_SD_verifier>("Atomic Origin", data_size, n_runs);
 
+
+    // uint16_t out = 0;
+
+    // bool res[4] = {false};
+    // queue.pop_to(&out);
+    // std::thread t1(&writer, 1, 2, 1000, 5, &res[0]);
+    // std::thread t2(&writer, 2, 2, 1000, 5, &res[1]);
+    // // std::thread t3(&writer, 3, 4, 1000, 5, &res[2]);
+    // // std::thread t4(&writer, 4, 4, 1000, 5, &res[3]);
+
+
+
+    // t1.join();
+    // t2.join();
+    // // t3.join();
+    // // t4.join();
+    // std::cout << res[0] << " " << res[1] << " "<< res[2] << " "<< res[3] << std::endl;
+
+    // uint64_t sum = 0;
+    // uint64_t n = 0;
+
+    // while (queue.pop_to(&out)) {
+    //     std::cout << "Pop: " << std::dec << out << std::endl;
+    //     n++;
+    //     sum += out;
+    // }
+    // std::cout << "sum= " << std::dec <<sum << " N: "<< n << std::endl;
+    
     return 0;
 }
